@@ -1,37 +1,43 @@
-# To learn more about how to use Nix to configure your environment
-# see: https://firebase.google.com/docs/studio/customize-workspace
 { pkgs, ... }: {
+
   # Which nixpkgs channel to use.
-  channel = "stable-24.05"; # or "unstable"
+  channel = "stable-24.11"; # or "unstable"
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.python311
+    pkgs.nodejs_20
   ];
 
   # Sets environment variables in the workspace
-  env = {};
-  idx = {
-    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
-    extensions = [];
+  env = {
+    SOME_ENV_VAR = "hello";
+  };
 
-    # Enable previews
+  # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
+  idx.extensions = [
+    "angular.ng-template"
+  ];
+
+  # Enable previews and customize configuration
+  idx.previews = {
+    enable = true;
     previews = {
-      enable = true;
-      previews = {
-        web = {
-          command = ["python3", "-m", "http.server", "$PORT"];
-          manager = "web";
-        };
+      web = {
+        command = [
+          "npm"
+          "run"
+          "start"
+          "--"
+          "--port"
+          "$PORT"
+          "--host"
+          "0.0.0.0"
+          "--disable-host-check"
+        ];
+        manager = "web";
+        # Optionally, specify a directory that contains your web app
+        # cwd = "app/client";
       };
-    };
-
-    # Workspace lifecycle hooks
-    workspace = {
-      # Runs when a workspace is first created
-      onCreate = {};
-      # Runs when the workspace is (re)started
-      onStart = {};
     };
   };
 }
